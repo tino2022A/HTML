@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reproductor de Contenidos</title>
+  <style>
+    #main-container {
+      display: flex;
+      justify-content: space-between;
+      margin: 20px;
+    }
+
+    #video-container {
+      flex: 1;
+    }
+
+    #m3u-container,
+    #mp4-container {
+      width: 45%;
+    }
+
+    #playlist-input,
+    #mp4-input {
+      width: 70%;
+    }
+
+    #playlist-submit,
+    #mp4-submit {
+      width: 25%;
+    }
+
+    #playlist-dropdown {
+      width: 100%;
+    }
+
+    video {
+      width: 100%;
+      height: auto;
+    }
+  </style>
+</head>
+<body>
+  <div id="main-container">
+    <div id="video-container">
+      <h2>Reproductor</h2>
+      <video id="media-player" controls>
+        <source id="video-source" src="" type="application/x-mpegURL">
+      </video>
+    </div>
+
+    <div id="m3u-container">
+      <h2>Lista M3U</h2>
+      <input type="text" id="playlist-input" placeholder="Ingresa la URL de la lista M3U">
+      <button onclick="loadM3U()">Cargar Lista</button>
+      <select id="playlist-dropdown" size="5"></select>
+    </div>
+
+    <div id="mp4-container">
+      <h2>Lista MP4</h2>
+      <input type="text" id="mp4-input" placeholder="Ingresa la URL del video MP4">
+      <button onclick="loadMP4()">Cargar Video</button>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/m3u8-parser/2.11.0/m3u8-parser.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dashjs/3.1.0/dash.all.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/video.js/7.11.8/alt/video.core.min.js"></script>
+
+  <script>
+    const mediaPlayer = document.getElementById('media-player');
+    const videoSource = document.getElementById('video-source');
+    const playlistInput = document.getElementById('playlist-input');
+    const playlistDropdown = document.getElementById('playlist-dropdown');
+    const mp4Input = document.getElementById('mp4-input');
+
+    async function loadM3U() {
+      const playlistUrl = playlistInput.value;
+      try {
+        const response = await fetch(playlistUrl);
+        const data = await response.text();
+        
+        const parser = new M3U8Parser();
+        parser.push(data);
+        parser.end();
+        
+        const playlists = parser.manifest.playlists;
+        
+        if (playlists && playlists.length > 0) {
+          // Limpiar el contenido actual de la lista desplegable
+          playlistDropdown.innerHTML = '';
+          
+          // Llenar la lista desplegable con los elementos de la lista M3U
+          playlists.forEach((playlist, index) => {
+            const option = document.createElement('option');
+            option.value = index;
+            option.text = playlist.uri;
+            playlistDropdown.add(option);
+          });
+        }
+      } catch (error) {
+        console.error('Error al cargar la lista M3U:', error);
+      }
+    }
+
+    function loadMP4() {
+      const mp4Url = mp4Input.value;
+      videoSource.src = mp4Url;
+      mediaPlayer.load();
+    }
+
+    playlistDropdown.addEventListener('change', function() {
+      const selectedIndex = playlistDropdown.value;
+      const selectedPlaylist = mediaPlayer.srcObject.manifest.playlists[selectedIndex];
+      if (selectedPlaylist) {
+        const videoUrl = selectedPlaylist.uri;
+        videoSource.src = videoUrl;
+        mediaPlayer.load();
+      }
+    });
+  </script>
+</body>
+</html>

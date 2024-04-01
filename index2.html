@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verificador y Reproductor de Lista M3U/M3U8</title>
+    <!-- Añade la biblioteca Video.js -->
+    <link href="https://vjs.zencdn.net/7.14.3/video-js.css" rel="stylesheet">
+    <script src="https://vjs.zencdn.net/7.14.3/video.js"></script>
+    <style>
+        .video-option {
+            margin-bottom: 8px;
+        }
+
+        .video-option img {
+            max-width: 100%;
+            max-height: 80px;
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+
+<div>
+    <h1>Verificador y Reproductor de Lista M3U/M3U8</h1>
+    <input type="text" id="playlistUrl" placeholder="URL de la lista de reproducción">
+    <button onclick="checkAndPlayPlaylist()">Verificar y Reproducir Lista</button>
+
+    <div id="result"></div>
+    <!-- Contenedor para el reproductor de video -->
+    <video id="videoPlayer" class="video-js"></video>
+</div>
+
+<script>
+    var videoOptions = []; // Almacenar opciones de video para su posterior referencia
+
+    function checkAndPlayPlaylist() {
+        var playlistUrl = document.getElementById('playlistUrl').value;
+
+        fetch(playlistUrl, {mode: 'cors'})
+            .then(response => response.text())
+            .then(data => {
+                var resultElement = document.getElementById('result');
+                resultElement.innerHTML = 'Lista verificada';
+
+                var lines = data.split('\n');
+                videoOptions = [];
+
+                lines.forEach((line, index) => {
+                    if (line.trim().startsWith('#')) {
+                        return;
+                    }
+
+                    var resourceUrl = line.trim();
+                    var videoName = getVideoName(resourceUrl);
+                    var option = document.createElement('div');
+                    option.className = 'video-option';
+                    option.innerHTML = `<a href="#" onclick="selectVideo('${resourceUrl}')">${videoName}</a>`;
+                    resultElement.appendChild(option);
+
+                    videoOptions.push({
+                        videoName: videoName,
+                        videoUrl: resourceUrl
+                    });
+                });
+
+                document.getElementById('videoPlayer').src = videoOptions[0].videoUrl;
+            })
+            .catch(error => {
+                console.error('Error al cargar la lista de reproducción:', error);
+                var resultElement = document.getElementById('result');
+                resultElement.innerHTML = 'Error al cargar la lista de reproducción';
+            });
+    }
+
+    function selectVideo(videoUrl) {
+        document.getElementById('videoPlayer').src = videoUrl;
+    }
+
+    // Función para obtener el nombre del video
+    function getVideoName(url) {
+        // Implementa lógica para obtener el nombre del video si es necesario
+        // Por ahora, simplemente devolvemos la URL
+        return url;
+    }
+
+    // Resto del código...
+
+</script>
+
+</body>
+</html>
