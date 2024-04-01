@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reproductor de Video</title>
+  <style>
+    /* Estilos CSS para el reproductor y la lista de reproducción */
+    /* Añade tus estilos personalizados aquí */
+
+    body {
+      background-color: #232323; /* Color de fondo de la página */
+    }
+
+    #vplayer {
+      background: #232323 url('tu_logo.png') no-repeat center center; /* Agrega la URL de tu logo */
+      background-size: contain;
+      padding: 10px 20px;
+      text-align: center;
+    }
+
+    video {
+      width: 100%;
+      background: #f1f3f4;
+      margin: 0 auto;
+      display: block;
+    }
+
+    #vplaylist {
+      margin: 20px auto;
+      background: #23a6b3;
+      border-top: 1px solid #fff;
+      text-align: left;
+      font-size: 14px;
+      font-family: 'Arial', Helvetica, sans-serif;
+      font-weight: normal;
+      max-width: 500px; /* Ancho máximo de la lista de reproducción */
+      padding: 10px;
+    }
+
+    #vplaylist li {
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    #vplaylist li a {
+      color: #ccc;
+      background: #232323;
+      padding: 7px 10px;
+      display: block;
+      text-decoration: none;
+      border-radius: 5px;
+      margin: 5px 0;
+    }
+
+    #vplaylist li a:hover {
+      background: #23a6b3;
+      color: #fff;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div id="vplayer">
+    <video controls="" height="224" width="100%" id="video" preload="auto" tabindex="0" type="video/mp4">
+      <source src="URL_PRIMER_VIDEO.mp4" type="video/mp4">
+      <!-- Agrega las fuentes para otros formatos aquí -->
+    </video>
+  </div>
+  <ul id="vplaylist">
+    <li class="active"><a href="URL_PRIMER_VIDEO.mp4">NOMBRE DEL PRIMER VIDEO</a></li>
+    <li><a href="URL_SEGUNDO_VIDEO.mp4">NOMBRE DEL SEGUNDO VIDEO</a></li>
+    <li><a href="URL_TERCER_VIDEO.mkv">NOMBRE DEL TERCER VIDEO</a></li>
+    <li><a href="URL_CUARTO_VIDEO.avi">NOMBRE DEL CUARTO VIDEO</a></li>
+    <li><a href="URL_QUINTO_VIDEO.mpd">NOMBRE DEL QUINTO VIDEO</a></li>
+    <!-- Agrega más elementos de lista para más videos y formatos -->
+  </ul>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script>
+    // JavaScript para controlar el reproductor de video y la lista de reproducción
+    var video;
+    var vplaylist;
+    var vtracks;
+    var vcurrent;
+
+    initvideo();
+
+    function initvideo() {
+      vcurrent = 0;
+      video = $('#video');
+      vplaylist = $('#vplaylist');
+      vtracks = vplaylist.find('li a');
+      vlen = vtracks.length - 1;
+      video[0].volume = 1;
+
+      vplaylist.find('a').click(function (e) {
+        e.preventDefault();
+        link = $(this);
+        vcurrent = link.parent().index();
+        runvideo(link, video[0]);
+      });
+
+      video[0].addEventListener('ended', function (e) {
+        vcurrent++;
+        if (vcurrent > vlen) {
+          vcurrent = 0;
+          link = vplaylist.find('a')[0];
+        } else {
+          link = vplaylist.find('a')[vcurrent];
+        }
+        runvideo($(link), video[0]);
+      });
+    }
+
+    function runvideo(link, player) {
+      player.src = link.attr('href');
+      par = link.parent();
+      par.addClass('active').siblings().removeClass('active');
+      video[0].load();
+      video[0].play();
+    }
+  </script>
+</body>
+</html>

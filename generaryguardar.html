@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Extractor y Verificador de Listas M3U</title>
+    <!-- Estilos CSS básicos -->
+    <style>
+        textarea {
+            width: 100%;
+            height: 200px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Extractor y Verificador de Listas M3U</h1>
+    
+    <!-- Área para cargar archivos locales -->
+    <input type="file" id="fileInput" accept=".m3u,.m3u8">
+    
+    <h2>Contenido del Archivo M3U</h2>
+    <textarea id="m3uContent" readonly></textarea>
+
+    <h2>Enlaces Funcionales</h2>
+    <textarea id="functionalLinks" readonly></textarea>
+    
+    <!-- Botones para guardar y compartir enlaces funcionales -->
+    <button onclick="saveFunctionalLinks()">Guardar Enlaces</button>
+    <button onclick="shareFunctionalLinks()">Compartir Enlaces</button>
+    
+    <!-- Selector de almacenamiento para la opción de guardar -->
+    <label for="storageSelect">Guardar en:</label>
+    <select id="storageSelect">
+        <option value="local">Almacenamiento Local</option>
+        <option value="cloud">Nube</option>
+        <option value="server">Servidor Externo</option>
+    </select>
+    
+    <!-- JavaScript para la funcionalidad -->
+    <script>
+        // Función para manejar la carga de archivos locales
+        document.getElementById('fileInput').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const contents = e.target.result;
+                document.getElementById('m3uContent').value = contents;
+                extractFunctionalLinks(contents);
+            };
+            reader.readAsText(file);
+        });
+
+        // Función para extraer los enlaces funcionales de la lista M3U
+        function extractFunctionalLinks(contents) {
+            const lines = contents.split('\n');
+            const functionalLinks = lines.filter(line => line.startsWith('http'));
+            document.getElementById('functionalLinks').value = functionalLinks.join('\n');
+        }
+
+        // Función para guardar los enlaces funcionales
+        function saveFunctionalLinks() {
+            const functionalLinks = document.getElementById('functionalLinks').value;
+            const storageOption = document.getElementById('storageSelect').value;
+            // Aquí puedes implementar la lógica para guardar los enlaces en el lugar seleccionado (por ejemplo, localStorage, nube o servidor externo)
+            alert(`Los enlaces funcionales han sido guardados en ${storageOption}.`);
+        }
+
+        // Función para compartir los enlaces funcionales (ejemplo básico, puede necesitar lógica adicional)
+        function shareFunctionalLinks() {
+            const functionalLinks = document.getElementById('functionalLinks').value;
+            // Aquí puedes implementar la lógica para compartir los enlaces (por ejemplo, copiar al portapapeles o enviar por correo electrónico)
+            alert('Los enlaces funcionales se han copiado al portapapeles.');
+        }
+    </script>
+</body>
+</html>

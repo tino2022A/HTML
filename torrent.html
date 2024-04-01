@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reproductor de Archivos Torrent</title>
+    <script src="https://cdn.jsdelivr.net/npm/webtorrent@0.105.3/webtorrent.min.js"></script>
+</head>
+<body>
+
+<div>
+    <h1>Reproductor de Archivos Torrent</h1>
+    <input type="text" id="torrentUrl" placeholder="URL del archivo torrent">
+    <button onclick="playTorrent()">Reproducir Torrent</button>
+</div>
+
+<div id="player">
+    <!-- Aquí se mostrará el reproductor -->
+</div>
+
+<script>
+    var client = new WebTorrent();
+
+    function playTorrent() {
+        var torrentUrl = document.getElementById('torrentUrl').value;
+
+        client.add(torrentUrl, function (torrent) {
+            // Selecciona el primer archivo del torrent para reproducir
+            var file = torrent.files[0];
+
+            // Crea un elemento de video para reproducir el archivo
+            var video = document.createElement('video');
+            video.controls = true;
+            video.crossOrigin = 'anonymous'; // Añade el atributo 'crossorigin'
+            document.getElementById('player').appendChild(video);
+
+            // Manejo de eventos de error para obtener más información
+            video.addEventListener('error', function (e) {
+                console.error('Error en la reproducción del video:', e);
+            });
+
+            // Asigna la fuente del video al archivo torrent
+            file.getBlobURL(function (err, url) {
+                if (err) {
+                    console.error('Error al obtener la URL del archivo:', err);
+                    return;
+                }
+                video.src = url;
+            });
+        });
+    }
+</script>
+
+</body>
+</html>

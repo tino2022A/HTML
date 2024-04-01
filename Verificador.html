@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verificador y Reproductor de Lista M3U/M3U8</title>
+    <!-- Añade la biblioteca Video.js -->
+    <link href="https://vjs.zencdn.net/7.14.3/video-js.css" rel="stylesheet">
+    <script src="https://vjs.zencdn.net/7.14.3/video.js"></script>
+    <style>
+        /* Estilo para hacer que el cuadro de diálogo sea desplegable */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            padding: 12px;
+            z-index: 1;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+<div>
+    <h1>Verificador y Reproductor de Lista M3U/M3U8</h1>
+    <input type="text" id="playlistUrl" placeholder="URL de la lista de reproducción">
+    <button onclick="checkAndPlayPlaylist()">Verificar y Reproducir Lista</button>
+
+    <!-- Contenedor para el cuadro de diálogo desplegable -->
+    <div class="dropdown">
+        <button onclick="showDropdown()" id="dropdownBtn">Seleccionar Video</button>
+        <div id="dropdownContent" class="dropdown-content"></div>
+    </div>
+
+    <div id="result"></div>
+    <!-- Contenedor para el reproductor de video -->
+    <video id="videoPlayer" class="video-js"></video>
+</div>
+
+<script>
+    function checkAndPlayPlaylist() {
+        var playlistUrl = document.getElementById('playlistUrl').value;
+
+        fetch(playlistUrl)
+            .then(response => response.text())
+            .then(data => {
+                // Mostrar el contenido de la lista
+                var dropdownContentElement = document.getElementById('dropdownContent');
+                dropdownContentElement.innerHTML = '';
+
+                // Analizar la lista de reproducción
+                var lines = data.split('\n');
+                var valid = true;
+
+                // Construir opciones de selección
+                lines.forEach((line, index) => {
+                    if (line.trim().startsWith('#')) {
+                        // Ignorar líneas de comentarios
+                        return;
+                    }
+
+                    // Suponemos que las URL de los recursos están en líneas no comentadas
+                    var resourceUrl = line.trim();
+                    var option = document.createElement('div');
+                    option.innerHTML = `<a href="#" onclick="selectVideo(${index}, '${resourceUrl}')">${resourceUrl}</a>`;
+                    dropdownContentElement.appendChild(option);
+                });
+
+                // Mostrar el resultado
+                var resultElement = document.getElementById('result');
+                resultElement.innerHTML = 'Lista verificada';
+
+                // Si la lista es válida, habilitar el cuadro de diálogo desplegable
+                document.getElementById('dropdownBtn').disabled = false;
+            })
+            .catch(error => {
+                console.error('Error al cargar la lista de reproducción:', error);
+                var resultElement = document.getElementById('result');
+                resultElement.innerHTML = 'Error al cargar la lista de reproducción';
+            });
+    }
+
+    function showDropdown() {
+        // Mostrar el cuadro de diálogo desplegable
+        document.getElementById('dropdownContent').style.display = 'block';
+    }
+
+    function selectVideo(index, videoUrl) {
+        // Ocultar el cuadro de diálogo desplegable al seleccionar un video
+        document.getElementById('dropdownContent').style.display = 'none';
+
+        // Mostrar el resultado
+        var resultElement = document.getElementById('result');
+        resultElement.innerHTML = 'Reproduciendo: ' + videoUrl;
+
+        // Reproducir el video seleccionado
+        playVideo(videoUrl);
+    }
+
+    function playVideo(videoUrl) {
+        // Configuración básica del reproductor de video usando Video.js
+        var player = videojs('videoPlayer', {
+            controls: true,
+            fluid: true,
+            sources: [{
+                src: videoUrl,
+                type: 'application/x-mpegURL' // Tipo para listas M3U/M3U8
+            }]
+        });
+
+        // Reproducir el video
+        player.play();
+    }
+</script>
+
+</body>
+</html>

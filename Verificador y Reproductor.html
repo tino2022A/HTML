@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verificador y Reproductor de Lista M3U/M3U8</title>
+    <!-- Añade la biblioteca Video.js -->
+    <link href="https://vjs.zencdn.net/7.14.3/video-js.css" rel="stylesheet">
+    <script src="https://vjs.zencdn.net/7.14.3/video.js"></script>
+</head>
+<body>
+
+<div>
+    <h1>Verificador y Reproductor de Lista M3U/M3U8</h1>
+    <input type="text" id="playlistUrl" placeholder="URL de la lista de reproducción">
+    <button onclick="checkAndPlayPlaylist()">Verificar y Reproducir Lista</button>
+    <div id="playlistContents"></div>
+    <div id="result"></div>
+    <!-- Contenedor para el reproductor de video -->
+    <video id="videoPlayer" class="video-js"></video>
+</div>
+
+<script>
+    function checkAndPlayPlaylist() {
+        var playlistUrl = document.getElementById('playlistUrl').value;
+
+        fetch(playlistUrl)
+            .then(response => response.text())
+            .then(data => {
+                // Mostrar el contenido de la lista
+                var playlistContentsElement = document.getElementById('playlistContents');
+                playlistContentsElement.innerHTML = '<h2>Contenido de la Lista:</h2>' + '<pre>' + data + '</pre>';
+
+                // Analizar la lista de reproducción
+                var lines = data.split('\n');
+                var valid = true;
+
+                // Construir opciones de selección
+                var options = [];
+                lines.forEach((line, index) => {
+                    if (line.trim().startsWith('#')) {
+                        // Ignorar líneas de comentarios
+                        return;
+                    }
+
+                    // Suponemos que las URL de los recursos están en líneas no comentadas
+                    var resourceUrl = line.trim();
+                    options.push({ index: index, url: resourceUrl });
+                });
+
+                // Mostrar opciones al usuario
+                var selectedIndex = promptUser(options);
+                if (selectedIndex === null) {
+                    // Usuario canceló la selección
+                    return;
+                }
+
+                // Mostrar el resultado
+                var resultElement = document.getElementById('result');
+                resultElement.innerHTML = 'Reproduciendo: ' + options[selectedIndex].url;
+
+                // Reproducir el video seleccionado
+                playVideo(options[selectedIndex].url);
+            })
+            .catch(error => {
+                console.error('Error al cargar la lista de reproducción:', error);
+                var resultElement = document.getElementById('result');
+                resultElement.innerHTML = 'Error al cargar la lista de reproducción';
+            });
+    }
+
+    function promptUser(options) {
+        // Mostrar un cuadro de diálogo al usuario para seleccionar una opción
+        var message = 'Seleccione el video a reproducir:\n';
+        options.forEach((option, index) => {
+            message += index + 1 + ': ' + option.url + '\n';
+        });
+
+        var userInput = prompt(message);
+        if (userInput === null) {
+            // Usuario canceló la selección
+            return null;
+        }
+
+        var selectedIndex = parseInt(userInput) - 1;
+        if (isNaN(selectedIndex) || selectedIndex < 0 || selectedIndex >= options.length) {
+            alert('Selección no válida. Intente nuevamente.');
+            return promptUser(options); // Volver a pedir la selección
+        }
+
+        return selectedIndex;
+    }
+
+    function playVideo(videoUrl) {
+        // Configuración básica del reproductor de video usando Video.js
+        var player = videojs('videoPlayer', {
+            controls: true,
+            fluid: true,
+            sources: [{
+                src: videoUrl,
+                type: 'application/x-mpegURL' // Tipo para listas M3U/M3U8
+            }]
+        });
+
+        // Reproducir el video
+        player.play();
+    }
+</script>
+
+</body>
+</html>

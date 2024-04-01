@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Reproductor de Video con Opciones Avanzadas</title>
+  <link href="https://cdn.plyr.io/3.6.4/plyr.css" rel="stylesheet">
+  <style>
+    #player-container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+  </style>
+</head>
+<body>
+  <div id="player-container">
+    <video id="video-player" playsinline controls>
+      <!-- La lista de reproducción se cargará dinámicamente desde el servidor -->
+    </video>
+  </div>
+
+  <button id="load-playlist-button">Cargar Lista de Reproducción</button>
+
+  <script src="https://cdn.plyr.io/3.6.4/plyr.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script>
+    $(document).ready(function() {
+      var player = new Plyr('#video-player', {
+        controls: ['play', 'progress', 'current-time', 'mute', 'volume', 'fullscreen', 'quality', 'captions', 'airplay']
+      });
+
+      $('#load-playlist-button').click(function() {
+        var playlistURL = 'https://channel01.akamaized.net/hls/live/2022749/event01/index.m3u8';
+
+        $.getJSON(playlistURL, function(data) {
+          var sources = data.map(function(item) {
+            return {
+              src: item.src,
+              type: item.type
+            };
+          });
+
+          player.source = {
+            type: 'video',
+            sources: sources
+          };
+        });
+      });
+    });
+  </script>
+</body>
+</html>

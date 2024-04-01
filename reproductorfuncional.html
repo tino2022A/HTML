@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editor de Listas M3U</title>
+    <!-- Estilos CSS básicos -->
+    <style>
+        textarea {
+            width: 100%;
+            height: 200px;
+            margin-bottom: 10px;
+        }
+    </style>
+    <!-- Incluir la biblioteca de Plyr.js para reproducir videos -->
+    <link rel="stylesheet" href="https://cdn.plyr.io/3.6.8/plyr.css" />
+</head>
+<body>
+    <h1>Editor de Listas M3U</h1>
+    
+    <!-- Área para cargar archivos locales -->
+    <input type="file" id="fileInput" accept=".m3u,.m3u8,.mp4,.mkv"><br>
+    
+    <!-- Campo de entrada para agregar enlaces externos -->
+    <input type="text" id="externalLink" placeholder="Ingrese un enlace externo">
+    <button onclick="addExternalLink()">Agregar Enlace</button><br>
+    
+    <!-- Área de visualización de la lista M3U -->
+    <h2>Lista M3U</h2>
+    <textarea id="m3uList" readonly></textarea><br>
+    
+    <!-- Área para mostrar los enlaces funcionales -->
+    <h2>Enlaces Funcionales</h2>
+    <textarea id="functionalLinks" readonly></textarea><br>
+    
+    <!-- Reproductor de video -->
+    <div id="videoPlayer" style="display: none;">
+        <video id="myVideo" controls crossorigin>
+            <!-- Fallback para navegadores que no soportan la etiqueta de video -->
+            Tu navegador no soporta la etiqueta de video.
+        </video>
+    </div>
+    
+    <!-- JavaScript para la funcionalidad -->
+    <script src="https://cdn.plyr.io/3.6.8/plyr.js"></script>
+    <script>
+        // Inicializar Plyr para el reproductor de video
+        const player = new Plyr('#myVideo');
+
+        // Función para manejar la carga de archivos locales
+        document.getElementById('fileInput').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const contents = e.target.result;
+                document.getElementById('m3uList').value = contents;
+                extractAndDisplayFunctionalLinks(contents);
+            };
+            reader.readAsText(file);
+        });
+
+        // Función para agregar enlaces externos
+        function addExternalLink() {
+            const link = document.getElementById('externalLink').value;
+            document.getElementById('m3uList').value += `\n#EXTINF:-1,[Nombre del canal] (${link})\n${link}`;
+            extractAndDisplayFunctionalLinks(document.getElementById('m3uList').value);
+        }
+
+        // Función para extraer y mostrar los enlaces funcionales
+        function extractAndDisplayFunctionalLinks(contents) {
+            const lines = contents.split('\n');
+            const functionalLinks = lines.filter(line => line.startsWith('http'));
+            document.getElementById('functionalLinks').value = functionalLinks.join('\n');
+        }
+
+        // Función para reproducir el video
+        function playVideo(url) {
+            const source = {
+                type: 'video',
+                sources: [{
+                    src: url,
+                    type: 'video/mp4',
+                }],
+            };
+            player.source = source;
+            player.play();
+            document.getElementById('videoPlayer').style.display = 'block';
+        }
+
+        // Obtener los enlaces funcionales del área de texto y agregarles la funcionalidad de reproducción de video al hacer clic
+        document.getElementById('functionalLinks').addEventListener('click', function(event) {
+            const clickedLink = event.target.value;
+            if (clickedLink.startsWith('http')) {
+                playVideo(clickedLink);
+            }
+        });
+    </script>
+</body>
+</html>

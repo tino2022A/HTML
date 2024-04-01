@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Título de tu Página</title>
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css"/>
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css"/>
+  <style>
+    /* Estilos CSS para el reproductor y los contenedores */
+    /* Añade tus estilos personalizados aquí */
+
+    body {
+      background-color: #f1f3f4;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+
+    #logo {
+      display: block;
+      margin: 20px auto;
+      max-width: 200px; /* Ajusta el tamaño de tu logo */
+    }
+
+    #vplayer-container {
+      background-color: rgba(0, 0, 0, 0.6);
+      padding: 20px;
+      max-width: 800px; /* Ajusta el ancho del reproductor */
+      margin: 0 auto;
+    }
+
+    video {
+      width: 100%;
+      background: #000;
+    }
+
+    #video-controls {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 10px;
+    }
+
+    #subtitle-control {
+      margin-right: 20px;
+    }
+
+    #wireless-display-control {
+      margin-right: 20px;
+    }
+
+    .container {
+      max-width: 800px; /* Ajusta el ancho de los contenedores */
+      margin: 20px auto;
+    }
+
+    .container-title {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .image-slider {
+      background: #23a6b3;
+      border-top: 1px solid #fff;
+      padding: 10px;
+    }
+
+    .image-item {
+      color: #ccc;
+      padding: 7px 10px;
+      text-decoration: none;
+      border-radius: 5px;
+      margin: 5px 0;
+    }
+
+    .image-item:hover {
+      background: #23a6b3;
+      color: #fff;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <a href="URL_LOGO_EXTERNO" target="_blank"><img id="logo" src="URL_LOGO_LOCAL" alt="Logo"></a>
+  <div id="vplayer-container">
+    <h1>Título de tu Página</h1>
+    <video controls="" id="video" preload="auto" tabindex="0">
+      <!-- Agrega fuentes de video y subtítulos aquí -->
+      <source src="URL_VIDEO.mp4" type="video/mp4">
+      <source src="URL_VIDEO.webm" type="video/webm">
+      <!-- Agrega más fuentes de video y subtítulos si es necesario -->
+      <track kind="subtitles" src="URL_SUBTITULOS.vtt" srclang="es" label="Español">
+      <!-- Agrega más pistas de subtítulos si es necesario -->
+    </video>
+    <div id="video-controls">
+      <button id="subtitle-control" onclick="toggleSubtitle()">Subtítulos</button>
+      <button id="wireless-display-control" onclick="toggleWirelessDisplay()">Pantalla inalámbrica</button>
+      <button onclick="toggleFullscreen()">Pantalla completa</button>
+    </div>
+  </div>
+
+  <!-- Contenedor 1: Movies -->
+  <div class="container">
+    <div class="container-title">Movies</div>
+    <div class="image-slider" id="movies-slider">
+      <!-- Carrusel de imágenes enlazadas a videos para Movies -->
+      <div class="image-item" data-video-url="URL_VIDEO_MOVIE1.mp4" data-subtitle-url="URL_SUBTITULOS_MOVIE1.vtt">
+        <a href="javascript:void(0);" onclick="playVideo('URL_VIDEO_MOVIE1.mp4', 'URL_SUBTITULOS_MOVIE1.vtt')"><img src="URL_IMAGEN_MOVIE1.jpg" alt="Imagen 1"></a>
+      </div>
+      <div class="image-item" data-video-url="URL_VIDEO_MOVIE2.mp4" data-subtitle-url="URL_SUBTITULOS_MOVIE2.vtt">
+        <a href="javascript:void(0);" onclick="playVideo('URL_VIDEO_MOVIE2.mp4', 'URL_SUBTITULOS_MOVIE2.vtt')"><img src="URL_IMAGEN_MOVIE2.jpg" alt="Imagen 2"></a>
+      </div>
+      <!-- Agrega más elementos de carrusel para más videos y enlaces para Movies -->
+    </div>
+  </div>
+
+  <!-- Contenedor 2: Terror -->
+  <div class="container">
+    <div class="container-title">Terror</div>
+    <div class="image-slider" id="terror-slider">
+      <!-- Carrusel de imágenes enlazadas a videos para Terror -->
+      <div class="image-item" data-video-url="URL_VIDEO_TERROR1.mp4" data-subtitle-url="URL_SUBTITULOS_TERROR1.vtt">
+        <a href="javascript:void(0);" onclick="playVideo('URL_VIDEO_TERROR1.mp4', 'URL_SUBTITULOS_TERROR1.vtt')"><img src="URL_IMAGEN_TERROR1.jpg" alt="Imagen 1"></a>
+      </div>
+      <div class="image-item" data-video-url="URL_VIDEO_TERROR2.mp4" data-subtitle-url="URL_SUBTITULOS_TERROR2.vtt">
+        <a href="javascript:void(0);" onclick="playVideo('URL_VIDEO_TERROR2.mp4', 'URL_SUBTITULOS_TERROR2.vtt')"><img src="URL_IMAGEN_TERROR2.jpg" alt="Imagen 2"></a>
+      </div>
+      <!-- Agrega más elementos de carrusel para más videos y enlaces para Terror -->
+    </div>
+  </div>
+
+  <!-- Contenedor 3: Acción -->
+  <div class="container">
+    <div class="container-title">Acción</div>
+    <div class="image-slider" id="accion-slider">
+      <!-- Carrusel de imágenes enlazadas a videos para Acción -->
+      <div class="image-item" data-video-url="URL_VIDEO_ACCION1.mp4" data-subtitle-url="URL_SUBTITULOS_ACCION1.vtt">
+        <a href="javascript:void(0);" onclick="playVideo('URL_VIDEO_ACCION1.mp4', 'URL_SUBTITULOS_ACCION1.vtt')"><img src="URL_IMAGEN_ACCION1.jpg" alt="Imagen 1"></a>
+      </div>
+      <div class="image-item" data-video-url="URL_VIDEO_ACCION2.mp4" data-subtitle-url="URL_SUBTITULOS_ACCION2.vtt">
+        <a href="javascript:void(0);" onclick="playVideo('URL_VIDEO_ACCION2.mp4', 'URL_SUBTITULOS_ACCION2.vtt')"><img src="URL_IMAGEN_ACCION2.jpg" alt="Imagen 2"></a>
+      </div>
+      <!-- Agrega más elementos de carrusel para más videos y enlaces para Acción -->
+    </div>
+  </div>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
+  <script>
+    // JavaScript para controlar el reproductor de video y los carruseles de imágenes
+    var video;
+
+    initvideo();
+
+    function initvideo() {
+      video = $('#video');
+
+      // Configurar los carruseles de imágenes
+      $('#movies-slider, #terror-slider, #accion-slider').each(function() {
+        var slider = $(this);
+        slider.slick({
+          slidesToShow: 3,
+          slidesToScroll: 1,
+          centerMode: true,
+          focusOnSelect: true,
+          infinite: false,
+          prevArrow: false,
+          nextArrow: false
+        });
+
+        slider.on('afterChange', function(event, slick, currentSlide, nextSlide){
+          var currentItem = slider.find('.slick-center .image-item');
+          var videoUrl = currentItem.data('video-url');
+          var subtitleUrl = currentItem.data('subtitle-url');
+
+          // Actualizar las fuentes de video y subtítulos
+          video.attr('src', videoUrl);
+          video[0].load();
+          video[0].play();
+
+          // Actualizar la pista de subtítulos
+          var track = video.find('track');
+          track.attr('src', subtitleUrl);
+          video[0].textTracks[0].mode = 'showing';
+        });
+      });
+
+      // Reproducir el primer video
+      var firstItem = $('#movies-slider').find('.slick-center .image-item');
+      var firstVideoUrl = firstItem.data('video-url');
+      var firstSubtitleUrl = firstItem.data('subtitle-url');
+
+      video.attr('src', firstVideoUrl);
+      video[0].load();
+      video[0].play();
+
+      // Inicializar la pista de subtítulos
+      var track = video.find('track');
+      track.attr('src', firstSubtitleUrl);
+      video[0].textTracks[0].mode = 'showing';
+    }
+
+    function toggleSubtitle() {
+      var videoElement = document.getElementById('video');
+      if (videoElement.textTracks[0].mode == 'showing') {
+        videoElement.textTracks[0].mode = 'hidden';
+      } else {
+        videoElement.textTracks[0].mode = 'showing';
+      }
+    }
+
+    function toggleFullscreen() {
+      var videoElement = document.getElementById('video');
+      if (videoElement.requestFullscreen) {
+        if (document.fullscreenElement) {
+          document.exitFullscreen();
+        } else {
+          videoElement.requestFullscreen();
+        }
+      }
+    }
+
+    function toggleWirelessDisplay() {
+      // Agregar aquí la lógica para activar/desactivar la pantalla inalámbrica
+      alert('Función de pantalla inalámbrica');
+    }
+
+    function playVideo(videoUrl, subtitleUrl) {
+      video.attr('src', videoUrl);
+      video[0].load();
+      video[0].play();
+
+      var track = video.find('track');
+      track.attr('src', subtitleUrl);
+      video[0].textTracks[0].mode = 'showing';
+    }
+  </script>
+</body>
+</html>

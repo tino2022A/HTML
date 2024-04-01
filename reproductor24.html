@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Reproductor de Video</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        background-color: #f0f0f0;
+      }
+      
+      #container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        margin-top: 50px;
+      }
+      
+      video {
+        width: 80%;
+        height: auto;
+        margin-top: 30px;
+      }
+      
+      .button {
+        padding: 10px 20px;
+        border-radius: 10px;
+        background-color: #4CAF50;
+        color: white;
+        font-size: 18px;
+        font-weight: bold;
+        margin-top: 20px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="container">
+      <h1>Reproductor de Video</h1>
+      <input type="file" id="fileInput" accept=".mp4,.mkv,.m3u,.m3u8" />
+      <button class="button" id="playButton">Reproducir</button>
+      <video id="player" controls></video>
+    </div>
+
+    <script>
+      var fileInput = document.getElementById('fileInput');
+      var playButton = document.getElementById('playButton');
+      var player = document.getElementById('player');
+
+      playButton.addEventListener('click', function() {
+        var file = fileInput.files[0];
+        if (file) {
+          var url = URL.createObjectURL(file);
+          player.src = url;
+          player.play();
+        }
+      });
+    </script>
+  </body>
+</html>

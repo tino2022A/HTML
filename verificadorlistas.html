@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verificador de Lista M3U/M3U8</title>
+</head>
+<body>
+
+<div>
+    <h1>Verificador de Lista M3U/M3U8</h1>
+    <input type="text" id="playlistUrl" placeholder="URL de la lista de reproducción">
+    <button onclick="checkPlaylist()">Verificar Lista</button>
+    <div id="result"></div>
+</div>
+
+<script>
+    function checkPlaylist() {
+        var playlistUrl = document.getElementById('playlistUrl').value;
+
+        fetch(playlistUrl)
+            .then(response => response.text())
+            .then(data => {
+                // Analizar la lista de reproducción
+                var lines = data.split('\n');
+                var valid = true;
+
+                // Verificar la disponibilidad de cada recurso en la lista
+                lines.forEach(line => {
+                    if (line.trim().startsWith('#')) {
+                        // Ignorar líneas de comentarios
+                        return;
+                    }
+
+                    // Suponemos que las URL de los recursos están en líneas no comentadas
+                    var resourceUrl = line.trim();
+                    if (!checkResourceAvailability(resourceUrl)) {
+                        valid = false;
+                    }
+                });
+
+                // Mostrar el resultado
+                var resultElement = document.getElementById('result');
+                resultElement.innerHTML = valid ? 'Lista válida' : 'Lista inválida';
+            })
+            .catch(error => {
+                console.error('Error al cargar la lista de reproducción:', error);
+                var resultElement = document.getElementById('result');
+                resultElement.innerHTML = 'Error al cargar la lista de reproducción';
+            });
+    }
+
+    function checkResourceAvailability(url) {
+        // Aquí puedes implementar lógica para verificar la disponibilidad de la URL
+        // Puedes utilizar fetch() u otras técnicas según tus necesidades
+        // Por ejemplo, puedes intentar cargar la URL y verificar el código de respuesta
+
+        // Este es un ejemplo simple que siempre devuelve true
+        return true;
+    }
+</script>
+
+</body>
+</html>
